@@ -1,15 +1,15 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 from bs4 import BeautifulSoup
 from constructors import Propiedad
 import requests
 import json
 
 
-def getPropertiesInPageData(n_page: int = 1, selectors: Tuple = ()) -> Tuple[List[Dict], bool]:
+def getPropertiesInPageData(n_page: int = 1, selectors: Tuple[str, ...] = ()) -> Tuple[List[Dict[str, Any]], bool]:
 
-    container_css_selector, price_selector, title_selector, zone_type_offer_selector, bed_wc_surface_selector, next_page_selector = selectors
+    url, container_css_selector, price_selector, title_selector, zone_type_offer_selector, bed_wc_surface_selector, next_page_selector = selectors
 
-    url = f'https://www.ultracasas.com/buscar/casa-o-departamento-o-terreno-en-venta--en--la-paz---la-paz?page={str(n_page)}'
+    url = f'{url}{str(n_page)}'
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -33,7 +33,7 @@ def getPropertiesInPageData(n_page: int = 1, selectors: Tuple = ()) -> Tuple[Lis
     return page_data, stop_parsing
     
 
-def zoneTypeOfferSeparator(city_zone_type_offer: str) -> Tuple:
+def zoneTypeOfferSeparator(city_zone_type_offer: str) -> Tuple[str, ...]:
     city = city_zone_type_offer.split(' - ')[0].split(', ')[1]
     zone = city_zone_type_offer.split(' - ')[0].split(', ')[0]
     type = city_zone_type_offer.split(' - ')[1].split(' en ')[0]
@@ -42,34 +42,43 @@ def zoneTypeOfferSeparator(city_zone_type_offer: str) -> Tuple:
     return city, zone, type, offer
 
 
-def getBedWcSurface(card: str, selector: str) -> Tuple:
-    try:
-        n_bedrooms = card.select(selector)[0].text
-        n_bedrooms = int(n_bedrooms) if n_bedrooms != '' else ''
-        n_wc = card.select(selector)[1].text
-        n_wc = int(n_wc) if n_wc != '' else ''
-        surface = card.select(selector)[2].text
-        
-    except:
-        try:
-            n_bedrooms = int(card.select(selector)[0].text)
-            n_wc = int(card.select(selector)[1].text)
-            surface = ''
-        except:
-            try:
-                n_bedrooms = int(card.select(selector)[0].text)
-                n_wc = ''
-                surface = card.select(selector)[1].text
-            except:
-                try:
-                    n_bedrooms = ''
-                    n_wc = ''
-                    surface = card.select(selector)[0].text
-                except:
-                    n_bedrooms = ''
-                    n_wc = ''
-                    surface = ''
+def getBedWcSurface(card: Any, selector: str) -> Tuple[Any, ...]:
+    svg_bed = '.fa-bed'
+    svg_bath = '.fa-bath'
 
+    n_bedrooms = ''
+    n_wc = ''
+    surface = ''
+
+    container = card.select(selector)
+    if len(container) == 3:
+        n_bedrooms = int(container[0].text) if container[0].text != '' else ''
+        n_wc = int(container[1].text) if container[1].text != '' else ''
+        surface = container[2].text
+        return n_bedrooms, n_wc, surface
+
+    if len(container) == 2:
+        try:
+            n_bedrooms = int(container[0].text)
+            n_wc = int(container[1].text)
+        except:
+            if container[0].select(svg_bath) != []:
+                n_wc = int(container[0].text)
+            n_bedrooms = int(container[0].text)
+            surface = container[1].text
+        return n_bedrooms, n_wc, surface
+
+    if len(container) == 1:
+        if container[0].select(svg_bath) != []:
+            n_wc = int(container[0].text)
+            return n_bedrooms, n_wc, surface
+        if container[0].select(svg_bed) != []:
+            n_bedrooms = int(container[0].text)
+            return n_bedrooms, n_wc, surface
+
+        surface = container[0].text
+        return n_bedrooms, n_wc, surface
+    
     return n_bedrooms, n_wc, surface
 
 

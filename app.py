@@ -1,27 +1,6 @@
 import time
-from utils import zoneTypeOfferSeparator, getPropertiesInPageData, writeToJson
-
-
-# PARAMETROS
-# #############################################
-container_css_selector = '.inmuebles-item:not(.ads_LISTADO_INMUEBLESPos1)'
-price_selector = '.inmuebles-item-precio h4'
-title_selector = 'h2.text-ellipsis.line-height-30px'
-zone_type_offer_selector = 'h3.text-ellipsis'
-bed_wc_surface_selector = 'ul.list-inline li.icon-default-color'
-next_page_selector = '#linkNext'
-
-output_file = 'output/casas_deptos_terrenos_data.json'
-# ##############################################
-
-selectors = (
-    container_css_selector,
-    price_selector,
-    title_selector,
-    zone_type_offer_selector,
-    bed_wc_surface_selector,
-    next_page_selector,
-)
+from utils import getPropertiesInPageData, writeToJson
+from parametros import selectors, output_file
 
 page_number = 1
 all_data = []

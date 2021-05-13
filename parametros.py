@@ -9,12 +9,12 @@ zone_type_offer_selector = 'h3.text-ellipsis'
 bed_wc_surface_selector = 'ul.list-inline li.icon-default-color'
 next_page_selector = '#linkNext'
 # ##############################################
-
-output_file = 'output/casas_deptos_terrenos_data.json'
-
 url = 'https://www.ultracasas.com/buscar/casa-o-departamento-o-oficina-o-local-comercial-o-galpon-o-terreno-o-habitacion-o-edificio-o-quinta-propiedad-agricola-en-venta-o-alquiler-o-anticretico--en--la-paz---la-paz?page='
 
 
+# VARIABLES TO EXPORT
+output_file = 'output/casas_deptos_terrenos_data.json'
+start_page = 1
 selectors = (
     url,
     container_css_selector,
@@ -25,28 +25,3 @@ selectors = (
     next_page_selector,
 )
 
-
-
-# casa = 1
-# departamento = 1
-# local = 1
-# terreno = 1
-
-# oficina = 1
-# habitacion = 1
-# galpon = 1
-# edificio = 1
-
-# venta = 1
-# alquiler = 1
-# anticretico = 1
-
-# region = 'la-paz'
-# ciudad = 'la-paz'
-
-# search = 'casa-o-departamento-o-oficina-o-local-comercial-o-galpon-o-terreno-o-habitacion-o-edificio-en-venta-o-alquiler-o-anticretico--en--la-paz---la-paz?page='
-
-# def get_search():
-
-#     url = f'{casa}{departamento}{oficina}{local}{galpon}{terreno}{habitacion}{edificio}en{venta}{alquiler}{anticretico}-en--{region}---{ciudad}'
-#     return url

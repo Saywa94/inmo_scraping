@@ -4,8 +4,10 @@ from constructors import Propiedad
 import requests
 import json
 
+from parametros import selectors, output_file
 
-def getPageData(n_page: int = 1, selectors: Tuple[str, ...] = ()) -> Tuple[List[Dict[str, Any]], bool]:
+
+def getPageData(n_page: int = 1) -> Tuple[List[Dict[str, Any]], bool]:
 
     url, container_css_selector, price_selector, title_selector, zone_type_offer_selector, bed_wc_surface_selector, next_page_selector = selectors
 
@@ -30,7 +32,7 @@ def getPageData(n_page: int = 1, selectors: Tuple[str, ...] = ()) -> Tuple[List[
         
         page_data.append(propiedad.__dict__)
     
-    stop_parsing = lasPage(soup, next_page_selector)
+    stop_parsing = lastPage(soup, next_page_selector)
 
     return page_data, stop_parsing
     
@@ -84,12 +86,12 @@ def getBedWcSurface(card: Any, selector: str) -> Tuple[Any, ...]:
     return n_bedrooms, n_wc, surface
 
 
-def lasPage(soup, page_selector: str) -> bool:
+def lastPage(soup, page_selector: str) -> bool:
     next_page = soup.select(page_selector)
     return next_page == []
 
 
-def writeToJson(pathToFile: str, all_data: List[Dict]):
-    out_file = open(pathToFile, "w", encoding='utf8')
+def writeToJson(all_data: List[Dict]):
+    out_file = open(output_file, "w", encoding='utf8')
     json.dump(all_data, out_file, indent = 4, ensure_ascii = False)
     out_file.close()
